@@ -1,0 +1,28 @@
+import xlrd
+word=xlrd.open_workbook('12月份衣服销售数据.xlsx',encoding_override=True)
+word_view=word.sheet_by_index(0)
+rows=word_view.nrows
+c0ls=word_view.ncols
+sum=0
+
+sal=0
+for i in range(1,rows):
+    sum+=word_view.cell_value(i,2)*word_view.cell_value(i,4)
+    sal+=word_view.cell_value(i,4)
+
+print('总销售额=',sum,'元')
+print('平均每日销售量=',sal/30,'件')
+
+while 1:
+    k=input('请输入要统计的衣服名称：')
+    sumk = 0
+    salk = 0
+    if k=='Q' or k=='q':
+        print('欢迎再次使用！')
+        break
+    for j in range(1,rows):
+        if k==word_view.cell_value(j,1):
+            sumk +=word_view.cell_value(j,4)
+    salk=sumk/sal
+
+    print(k,'衣服月销售占比=',salk*100,'%')
