@@ -1,0 +1,47 @@
+import xlwt
+import pymysql
+import xlrd
+def select(sql,prame,mode='all',size=1):
+    con = pymysql.connect(host='localhost', user='root', password='1234', database='company')
+    couser = con.cursor()
+    couser.execute(sql,prame)
+    if mode == 'all':
+        return couser.fetchall()
+    elif mode == 'one':
+        return couser.fetchone()
+    elif mode == 'many':
+        return couser.fetchmany()
+    con.commit()
+    couser.close()
+    con.close()
+
+wb = xlwt.Workbook()
+
+st = wb.add_sheet("t_dept")
+limit = select('select * from t_dept',(),mode='all')
+ziduan = select('SELECT column_name FROM information_schema.columns WHERE  table_name=%s',('t_dept'))
+for i in range(len(ziduan)):
+    st.write(0,i,ziduan[i])
+wb.save("三国集团.xls")
+wordbook = xlrd.open_workbook('三国集团.xls')
+wordbook_show = wordbook.sheet_by_index(0)
+cols = wordbook_show.ncols
+for i in range(0,len(limit)):
+    for j in range(cols):
+        st.write(i+1,j,limit[i][j])
+wb.save("三国集团.xls")
+
+
+st = wb.add_sheet('t_employees')
+ziduan1 = select('select column_name from information_schema.columns where table_name = %s',('t_employees'),mode='all')
+limit1 = select('select * from t_employees',(),mode='all')
+for i in range (len(ziduan1)):
+    st.write(0,i,ziduan1[i][0])
+wb.save('三国集团.xls')
+wordbook = xlrd.open_workbook('三国集团.xls')
+wordbook_view  = wordbook.sheet_by_name('t_employees')
+cols = wordbook_view.ncols
+for i in range(len(limit1)):
+    for j in range(cols):
+        st.write(i+1,j,limit1[i][j])
+wb.save('三国集团.xls')
